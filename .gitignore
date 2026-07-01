@@ -1,0 +1,15 @@
+# Local paper/PDF processing workspace
+test/
+zotero-pdf2zh-server/
+source/
+notes/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local scratch/export files
+*.log
+*.tmp

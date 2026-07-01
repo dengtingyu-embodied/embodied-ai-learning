@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>具身智能论文笔记</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">EI</div>
+          <div>
+            <h1>具身智能论文笔记</h1>
+            <p id="statusText">本地自动保存</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button id="importBtn" class="button secondary" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2"/></svg>
+            导入笔记
+          </button>
+          <button id="newBtn" class="button primary" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            新建
+          </button>
+          <button id="exportAllBtn" class="icon-button" type="button" title="导出全部 JSON" aria-label="导出全部 JSON">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V10m0 11 4-4m-4 4-4-4M5 7V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+        <input id="fileInput" type="file" accept=".md,.markdown,.json" multiple hidden />
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar">
+          <label class="search">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/></svg>
+            <input id="searchInput" type="search" placeholder="搜索论文、作者、标签" autocomplete="off" />
+          </label>
+
+          <div class="filters" aria-label="阅读状态筛选">
+            <button class="filter is-active" type="button" data-filter="全部">全部</button>
+            <button class="filter" type="button" data-filter="待读">待读</button>
+            <button class="filter" type="button" data-filter="精读中">精读中</button>
+            <button class="filter" type="button" data-filter="已读">已读</button>
+            <button class="filter" type="button" data-filter="重点">重点</button>
+          </div>
+
+          <div id="paperCount" class="paper-count"></div>
+          <div id="paperList" class="paper-list"></div>
+        </aside>
+
+        <section class="reader">
+          <div class="banner" aria-hidden="true">
+            <img src="./assets/embodied-ai-banner.png" alt="" />
+          </div>
+
+          <form id="noteForm" class="note-form">
+            <div class="title-row">
+              <input id="titleInput" class="title-input" name="title" placeholder="论文标题" />
+              <select id="statusInput" name="status" aria-label="阅读状态">
+                <option>待读</option>
+                <option>精读中</option>
+                <option>已读</option>
+                <option>重点</option>
+              </select>
+            </div>
+
+            <div class="meta-grid">
+              <label>
+                作者
+                <input id="authorsInput" name="authors" placeholder="Mahler et al." />
+              </label>
+              <label>
+                年份
+                <input id="yearInput" name="year" inputmode="numeric" placeholder="2017" />
+              </label>
+              <label>
+                会议/期刊
+                <input id="venueInput" name="venue" placeholder="CoRL / CVPR / arXiv" />
+              </label>
+              <label>
+                标签
+                <input id="tagsInput" name="tags" placeholder="grasping, benchmark" />
+              </label>
+            </div>
+
+            <label class="pdf-field">
+              PDF 链接
+              <input id="pdfInput" name="pdf" placeholder="../test/pdf2zh-output/Dex-Net.no_watermark.zh.mono.pdf" />
+            </label>
+
+            <label class="summary-field">
+              一句话
+              <input id="summaryInput" name="summary" placeholder="这篇论文解决了什么问题，最值得记住的点是什么" />
+            </label>
+
+            <div class="body-toolbar">
+              <div class="tabs" role="tablist" aria-label="笔记视图">
+                <button id="editTab" class="tab is-active" type="button">编辑</button>
+                <button id="previewTab" class="tab" type="button">阅读</button>
+              </div>
+              <div class="body-actions">
+                <a id="pdfLink" class="small-link" href="#" target="_blank" rel="noreferrer">打开 PDF</a>
+                <button id="exportMdBtn" class="small-button" type="button">导出 .md</button>
+                <button id="deleteBtn" class="danger-button" type="button">删除</button>
+              </div>
+            </div>
+
+            <textarea id="contentInput" name="content" spellcheck="false"></textarea>
+            <article id="preview" class="preview" hidden></article>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
