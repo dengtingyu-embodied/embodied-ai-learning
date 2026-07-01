@@ -2,7 +2,7 @@
 test/
 zotero-pdf2zh-server/
 source/
-notes/
+note/data/notes.json
 
 # OS/editor noise
 .DS_Store

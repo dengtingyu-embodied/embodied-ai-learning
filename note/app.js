@@ -521,6 +521,62 @@ function render() {
   renderForm();
 }
 
+function readSavedState() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) return { notes: [], activeId: "" };
+
+  try {
+    const parsed = JSON.parse(saved);
+    return {
+      notes: Array.isArray(parsed.notes) ? parsed.notes.map(normalizeNote) : [],
+      activeId: parsed.activeId || ""
+    };
+  } catch {
+    return { notes: [], activeId: "" };
+  }
+}
+
+async function loadRemoteNotes() {
+  try {
+    const response = await fetch("./data/notes.json", { cache: "no-store" });
+    if (!response.ok) return [];
+    const payload = await response.json();
+    return Array.isArray(payload.notes) ? payload.notes.map(normalizeNote) : [];
+  } catch {
+    return [];
+  }
+}
+
+function mergeRepoNotes(repoNotes, localNotes) {
+  const merged = new Map();
+  repoNotes.forEach((note) => merged.set(note.id, note));
+
+  localNotes.forEach((note) => {
+    const id = String(note.id || "");
+    const isSeed = id === "seed-dex-net" || id === "seed-graspnet";
+    const isRepoNote = id.startsWith("repo:");
+    if (!id || isSeed || isRepoNote || merged.has(id)) return;
+    merged.set(id, note);
+  });
+
+  return [...merged.values()].sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
+}
+
+async function hydrateState() {
+  const repoNotes = await loadRemoteNotes();
+  if (repoNotes.length) {
+    const saved = readSavedState();
+    state.notes = mergeRepoNotes(repoNotes, saved.notes);
+    state.activeId = state.notes.some((note) => note.id === saved.activeId)
+      ? saved.activeId
+      : state.notes[0]?.id || "";
+    persist(`已加载 ${repoNotes.length} 篇仓库笔记`);
+    return;
+  }
+
+  loadState();
+}
+
 function bindEvents() {
   els.importBtn.addEventListener("click", () => els.fileInput.click());
   els.fileInput.addEventListener("change", (event) => {
@@ -569,6 +625,7 @@ function bindEvents() {
   });
 }
 
-loadState();
-bindEvents();
-render();
+hydrateState().then(() => {
+  bindEvents();
+  render();
+});

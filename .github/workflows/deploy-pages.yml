@@ -28,6 +28,9 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
+      - name: Build notes data
+        run: python scripts/build-notes-data.py
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

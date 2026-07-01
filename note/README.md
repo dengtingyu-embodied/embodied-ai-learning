@@ -16,10 +16,15 @@ https://你的GitHub用户名.github.io/仓库名/
 
 ## 最简单的更新方式
 
-1. 点页面右上角的“导入笔记”。
-2. 选择 `.md`、`.markdown` 或导出的 `.json` 文件。
-3. 编辑后不用手动保存，浏览器会自动记住。
-4. 换电脑或备份时，点右上角下载图标导出全部 JSON。
+正式发布笔记时，把 `.md` 文件放到仓库根目录的 `notes/` 文件夹，然后提交并 push。
+
+```powershell
+git add notes
+git commit -m "Update paper notes"
+git push
+```
+
+页面右上角的“导入笔记”和“新建”适合临时整理草稿；要让别人也能看到，最终还是放进 `notes/` 并 push。
 
 ## Markdown 笔记格式
 
