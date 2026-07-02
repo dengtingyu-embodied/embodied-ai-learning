@@ -12,3 +12,4 @@ Thumbs.db
 # Local scratch/export files
 *.log
 *.tmp
+__pycache__/
