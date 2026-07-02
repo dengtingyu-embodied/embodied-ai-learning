@@ -4,7 +4,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-git add notes note README.md index.html .github scripts .gitignore .nojekyll
+git add notes source note README.md index.html .github scripts .gitignore .nojekyll
 
 $staged = git diff --cached --name-only
 if (-not $staged) {

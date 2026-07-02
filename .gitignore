@@ -1,7 +1,6 @@
 # Local paper/PDF processing workspace
 test/
 zotero-pdf2zh-server/
-source/
 note/data/notes.json
 
 # OS/editor noise

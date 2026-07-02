@@ -13,7 +13,7 @@ https://dengtingyu-embodied.github.io/embodied-ai-learning/
 把新的 Markdown 笔记放进 `notes/`，然后提交并 push：
 
 ```powershell
-git add notes
+git add notes source
 git commit -m "Update paper notes"
 git push
 ```
@@ -25,3 +25,9 @@ git push
 ```
 
 网站会自动读取 `notes/*.md` 并重新部署。
+
+PDF 放在 `source/`，在 Markdown 的开头写：
+
+```yaml
+pdf: "source/example.pdf"
+```

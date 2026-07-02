@@ -5,7 +5,7 @@ year: ""
 venue: ""
 tags: "embodied-ai"
 status: "待读"
-pdf: ""
+pdf: "source/example.pdf"
 summary: ""
 ---
 

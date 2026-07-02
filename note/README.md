@@ -5,11 +5,12 @@
 ## 更新方式
 
 1. 在 `notes/` 里新增或修改 Markdown 笔记。
-2. 提交并 push 到 GitHub。
-3. GitHub Pages 会自动部署。
+2. 如果有 PDF，把 PDF 放进仓库根目录的 `source/`。
+3. 提交并 push 到 GitHub。
+4. GitHub Pages 会自动部署。
 
 ```powershell
-git add notes
+git add notes source
 git commit -m "Update paper notes"
 git push
 ```
@@ -24,7 +25,7 @@ year: "2026"
 venue: "会议/期刊"
 tags: "grasping, embodied-ai"
 status: "待读"
-pdf: ""
+pdf: "source/example.pdf"
 summary: "一句话总结"
 ---
 

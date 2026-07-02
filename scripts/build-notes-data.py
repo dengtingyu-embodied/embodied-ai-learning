@@ -40,6 +40,20 @@ def parse_frontmatter(text: str):
     return meta, text[match.end() :]
 
 
+def normalize_pdf_path(value: str) -> str:
+    """Convert repo-root PDF paths into links that work from /note/."""
+    pdf = str(value or "").strip().replace("\\", "/")
+    if not pdf:
+        return ""
+    if re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*://", pdf):
+        return pdf
+    if pdf.startswith("/") or pdf.startswith("#") or pdf.startswith("../"):
+        return pdf
+    if pdf.startswith("./"):
+        pdf = pdf[2:]
+    return f"../{pdf}"
+
+
 def parse_note(path: Path):
     text = path.read_text(encoding="utf-8")
     meta, body = parse_frontmatter(text)
@@ -57,7 +71,7 @@ def parse_note(path: Path):
         "venue": meta.get("venue") or "",
         "tags": split_tags(meta.get("tags") or ""),
         "status": meta.get("status") or "待读",
-        "pdf": meta.get("pdf") or "",
+        "pdf": normalize_pdf_path(meta.get("pdf") or ""),
         "summary": meta.get("summary") or "",
         "content": body.strip(),
         "createdAt": updated,
