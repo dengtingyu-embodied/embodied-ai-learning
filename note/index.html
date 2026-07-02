@@ -26,13 +26,7 @@
             <input id="searchInput" type="search" placeholder="搜索论文、作者、标签" autocomplete="off" />
           </label>
 
-          <div class="filters" aria-label="阅读状态筛选">
-            <button class="filter is-active" type="button" data-filter="全部">全部</button>
-            <button class="filter" type="button" data-filter="待读">待读</button>
-            <button class="filter" type="button" data-filter="精读中">精读中</button>
-            <button class="filter" type="button" data-filter="已读">已读</button>
-            <button class="filter" type="button" data-filter="重点">重点</button>
-          </div>
+          <div id="tagFilters" class="filters" aria-label="标签筛选"></div>
 
           <p id="paperCount" class="paper-count"></p>
           <div id="paperList" class="paper-list"></div>

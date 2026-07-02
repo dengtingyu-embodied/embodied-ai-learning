@@ -10,6 +10,7 @@ Thumbs.db
 .idea/
 
 # Local scratch/export files
+downloads/
 *.log
 *.tmp
 __pycache__/

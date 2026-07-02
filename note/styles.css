@@ -211,16 +211,6 @@ button {
   line-height: 1.4;
 }
 
-.paper-status {
-  width: fit-content;
-  padding: 2px 7px;
-  border-radius: 999px;
-  background: #fff4cf;
-  color: #745313;
-  font-size: 12px;
-  font-weight: 800;
-}
-
 .mini-tags,
 .tag-row {
   display: flex;

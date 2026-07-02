@@ -26,6 +26,12 @@ git push
 
 网站会自动读取 `notes/*.md` 并重新部署。
 
+网页左侧会按每篇笔记开头的 `tags` 自动生成分类按钮，例如：
+
+```yaml
+tags: "grasping, benchmark, dataset"
+```
+
 PDF 放在 `source/`，在 Markdown 的开头写：
 
 ```yaml

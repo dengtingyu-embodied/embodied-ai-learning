@@ -3,13 +3,11 @@ title: "Dex-Net: A Cloud-Based Network of 3D Objects for Robust Grasp Planning"
 authors: "Mahler et al."
 year: "2017"
 venue: "ICRA"
-tags: "grasping, two-finger, , dex-net, robotics"
-status: "精读中"
+tags: "grasping, two-finger, , dex-net, robotics, fundamental"
+status: "已读"
 pdf: "source/processing/Dex-Net.pdf"
 summary: "通过采样抓取位姿和构建评价网络来解决鲁棒的二指抓取问题"
 ---
-
-# Dex-Net: A Cloud-Based Network of 3D Objects for Robust Grasp Planning
 
 ## 主要解决的问题
 二指夹爪抓取指定物品，要求泛化性和鲁棒性

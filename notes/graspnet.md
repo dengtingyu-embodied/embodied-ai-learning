@@ -4,7 +4,7 @@ authors: "Fang et al."
 year: "2020"
 venue: "CVPR"
 tags: "grasping, benchmark, dataset"
-status: "待读"
+status: "已读"
 pdf: "source/processing/GraspNet.pdf"
 summary: "提出面向通用物体抓取的大规模数据集、评价标准与基准任务。"
 ---

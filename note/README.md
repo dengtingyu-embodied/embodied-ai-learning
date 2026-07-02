@@ -17,6 +17,8 @@ git push
 
 ## Markdown 笔记格式
 
+`tags` 会作为网页分类依据，可以写一个或多个，用英文逗号隔开。
+
 ```markdown
 ---
 title: "论文标题"
@@ -24,7 +26,6 @@ authors: "作者"
 year: "2026"
 venue: "会议/期刊"
 tags: "grasping, embodied-ai"
-status: "待读"
 pdf: "source/example.pdf"
 summary: "一句话总结"
 ---

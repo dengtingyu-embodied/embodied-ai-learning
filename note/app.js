@@ -1,5 +1,5 @@
 const NOTE_DATA_URL = "./data/notes.json";
-const STATUS_ALL = "全部";
+const TAG_ALL = "全部";
 
 const fallbackNotes = [
   {
@@ -29,12 +29,13 @@ const state = {
   notes: [],
   activeId: "",
   query: "",
-  filter: STATUS_ALL
+  selectedTag: TAG_ALL
 };
 
 const els = {
   statusText: document.querySelector("#statusText"),
   searchInput: document.querySelector("#searchInput"),
+  tagFilters: document.querySelector("#tagFilters"),
   paperCount: document.querySelector("#paperCount"),
   paperList: document.querySelector("#paperList"),
   emptyState: document.querySelector("#emptyState"),
@@ -100,11 +101,17 @@ function activeNote() {
   return state.notes.find((note) => note.id === state.activeId) || state.notes[0] || null;
 }
 
+function allTags() {
+  return [...new Set(state.notes.flatMap((note) => note.tags))]
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, "zh-Hans-CN"));
+}
+
 function filteredNotes() {
   const query = state.query.trim().toLowerCase();
   return state.notes.filter((note) => {
-    const statusOk = state.filter === STATUS_ALL || note.status === state.filter;
-    if (!statusOk) return false;
+    const tagOk = state.selectedTag === TAG_ALL || note.tags.includes(state.selectedTag);
+    if (!tagOk) return false;
     if (!query) return true;
 
     const haystack = [note.title, note.authors, note.year, note.venue, note.summary, note.tags.join(" ")]
@@ -115,16 +122,31 @@ function filteredNotes() {
 }
 
 function render() {
-  renderList();
+  const notes = filteredNotes();
+  if (notes.length && !notes.some((note) => note.id === state.activeId)) {
+    state.activeId = notes[0].id;
+  }
+
+  renderTagFilters();
+  renderList(notes);
   renderNote();
 }
 
-function renderList() {
-  const notes = filteredNotes();
+function renderTagFilters() {
+  const tags = [TAG_ALL, ...allTags()];
+  els.tagFilters.innerHTML = tags
+    .map((tag) => {
+      const active = tag === state.selectedTag ? " is-active" : "";
+      return `<button class="filter${active}" type="button" data-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</button>`;
+    })
+    .join("");
+}
+
+function renderList(notes = filteredNotes()) {
   els.paperCount.textContent = `${notes.length} / ${state.notes.length} 篇论文`;
 
   if (!notes.length) {
-    els.paperList.innerHTML = `<div class="list-empty">没有匹配的论文</div>`;
+    els.paperList.innerHTML = `<div class="list-empty">没有匹配的标签或论文</div>`;
     return;
   }
 
@@ -135,7 +157,6 @@ function renderList() {
       return `<button class="paper-card${note.id === state.activeId ? " is-active" : ""}" type="button" data-id="${escapeHtml(note.id)}">
         <strong>${escapeHtml(note.title)}</strong>
         <small>${escapeHtml(meta || "未填写来源")}</small>
-        <span class="paper-status">${escapeHtml(note.status)}</span>
         <span class="mini-tags">${tags}</span>
       </button>`;
     })
@@ -150,7 +171,7 @@ function renderNote() {
   els.noteContent.hidden = !hasNote;
   if (!note) return;
 
-  els.noteStatus.textContent = note.status;
+  els.noteStatus.textContent = note.tags[0] || "论文笔记";
   els.noteTitle.textContent = note.title;
   els.noteMeta.textContent = [note.authors, note.year, note.venue].filter(Boolean).join(" · ");
   els.noteSummary.textContent = note.summary;
@@ -268,17 +289,14 @@ function escapeHtml(value) {
 function bindEvents() {
   els.searchInput.addEventListener("input", () => {
     state.query = els.searchInput.value;
-    renderList();
+    render();
   });
 
-  document.querySelectorAll(".filter").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.filter = button.dataset.filter;
-      document.querySelectorAll(".filter").forEach((item) => {
-        item.classList.toggle("is-active", item === button);
-      });
-      renderList();
-    });
+  els.tagFilters.addEventListener("click", (event) => {
+    const button = event.target.closest(".filter");
+    if (!button) return;
+    state.selectedTag = button.dataset.tag || TAG_ALL;
+    render();
   });
 
   els.paperList.addEventListener("click", (event) => {

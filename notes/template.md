@@ -4,7 +4,6 @@ authors: ""
 year: ""
 venue: ""
 tags: "embodied-ai"
-status: "待读"
 pdf: "source/example.pdf"
 summary: ""
 ---
