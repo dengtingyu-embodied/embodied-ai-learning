@@ -1,30 +1,18 @@
 # 具身智能论文笔记站
 
-打开 `index.html` 就能使用。数据会自动保存在当前浏览器里。
+这是一个只读展示页。网站内容来自仓库根目录的 `notes/*.md` 文件。
 
-## 免费上线方式
+## 更新方式
 
-推荐用 GitHub Pages。把整个 `note` 文件夹上传到一个公开 GitHub 仓库，然后在仓库的 Settings -> Pages 里选择发布分支即可。
-
-上线后地址一般是：
-
-```text
-https://你的GitHub用户名.github.io/仓库名/
-```
-
-根目录的 `index.html` 会自动跳到 `note/`。不需要买域名。域名只是让网址更好看，以后想换再绑定也可以。
-
-## 最简单的更新方式
-
-正式发布笔记时，把 `.md` 文件放到仓库根目录的 `notes/` 文件夹，然后提交并 push。
+1. 在 `notes/` 里新增或修改 Markdown 笔记。
+2. 提交并 push 到 GitHub。
+3. GitHub Pages 会自动部署。
 
 ```powershell
 git add notes
 git commit -m "Update paper notes"
 git push
 ```
-
-页面右上角的“导入笔记”和“新建”适合临时整理草稿；要让别人也能看到，最终还是放进 `notes/` 并 push。
 
 ## Markdown 笔记格式
 
@@ -36,7 +24,7 @@ year: "2026"
 venue: "会议/期刊"
 tags: "grasping, embodied-ai"
 status: "待读"
-pdf: "../test/pdf2zh-output/example.pdf"
+pdf: ""
 summary: "一句话总结"
 ---
 
