@@ -9,3 +9,8 @@
 ```yaml
 pdf: "source/example.pdf"
 ```
+
+
+git add notes source
+git commit -m "Update paper notes"
+git push
