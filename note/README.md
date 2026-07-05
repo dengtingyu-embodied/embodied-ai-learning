@@ -17,7 +17,8 @@ git push
 
 ## Markdown 笔记格式
 
-`tags` 会作为网页分类依据，可以写一个或多个，用英文逗号隔开。
+`category` 是网页左侧树形目录的大类。没写时会自动归到“待定”。
+`tags` 是论文的小标签，可以写一个或多个，用英文逗号隔开。
 
 ```markdown
 ---
@@ -25,6 +26,7 @@ title: "论文标题"
 authors: "作者"
 year: "2026"
 venue: "会议/期刊"
+category: "待定"
 tags: "grasping, embodied-ai"
 pdf: "source/example.pdf"
 summary: "一句话总结"

@@ -69,6 +69,7 @@ def parse_note(path: Path):
         "authors": meta.get("authors") or meta.get("author") or "",
         "year": meta.get("year") or "",
         "venue": meta.get("venue") or "",
+        "category": meta.get("category") or "待定",
         "tags": split_tags(meta.get("tags") or ""),
         "status": meta.get("status") or "待读",
         "pdf": normalize_pdf_path(meta.get("pdf") or ""),

@@ -26,7 +26,13 @@ git push
 
 网站会自动读取 `notes/*.md` 并重新部署。
 
-网页左侧会按每篇笔记开头的 `tags` 自动生成分类按钮，例如：
+网页左侧会按每篇笔记开头的 `category` 生成树形大类。没写 `category` 的笔记会自动放到“待定”。
+
+```yaml
+category: "数据集与基准"
+```
+
+`tags` 只作为论文的小标签展示，例如：
 
 ```yaml
 tags: "grasping, benchmark, dataset"

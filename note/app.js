@@ -1,5 +1,5 @@
 const NOTE_DATA_URL = "./data/notes.json";
-const TAG_ALL = "全部";
+const PENDING_CATEGORY = "待定";
 
 const fallbackNotes = [
   {
@@ -8,6 +8,7 @@ const fallbackNotes = [
     authors: "Mahler et al.",
     year: "2017",
     venue: "ICRA",
+    category: "基础方法",
     tags: ["grasping", "dex-net", "robotics"],
     status: "精读中",
     pdf: "",
@@ -28,14 +29,12 @@ const fallbackNotes = [
 const state = {
   notes: [],
   activeId: "",
-  query: "",
-  selectedTag: TAG_ALL
+  query: ""
 };
 
 const els = {
   statusText: document.querySelector("#statusText"),
   searchInput: document.querySelector("#searchInput"),
-  tagFilters: document.querySelector("#tagFilters"),
   paperCount: document.querySelector("#paperCount"),
   paperList: document.querySelector("#paperList"),
   emptyState: document.querySelector("#emptyState"),
@@ -56,6 +55,7 @@ function normalizeNote(note) {
     authors: String(note.authors || "").trim(),
     year: String(note.year || "").trim(),
     venue: String(note.venue || "").trim(),
+    category: String(note.category || PENDING_CATEGORY).trim() || PENDING_CATEGORY,
     tags: Array.isArray(note.tags) ? note.tags.map(String).filter(Boolean) : splitTags(note.tags),
     status: ["待读", "精读中", "已读", "重点"].includes(note.status) ? note.status : "待读",
     pdf: String(note.pdf || "").trim(),
@@ -101,20 +101,12 @@ function activeNote() {
   return state.notes.find((note) => note.id === state.activeId) || state.notes[0] || null;
 }
 
-function allTags() {
-  return [...new Set(state.notes.flatMap((note) => note.tags))]
-    .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b, "zh-Hans-CN"));
-}
-
 function filteredNotes() {
   const query = state.query.trim().toLowerCase();
   return state.notes.filter((note) => {
-    const tagOk = state.selectedTag === TAG_ALL || note.tags.includes(state.selectedTag);
-    if (!tagOk) return false;
     if (!query) return true;
 
-    const haystack = [note.title, note.authors, note.year, note.venue, note.summary, note.tags.join(" ")]
+    const haystack = [note.title, note.authors, note.year, note.venue, note.category, note.summary, note.tags.join(" ")]
       .join(" ")
       .toLowerCase();
     return haystack.includes(query);
@@ -127,40 +119,62 @@ function render() {
     state.activeId = notes[0].id;
   }
 
-  renderTagFilters();
   renderList(notes);
   renderNote();
 }
 
-function renderTagFilters() {
-  const tags = [TAG_ALL, ...allTags()];
-  els.tagFilters.innerHTML = tags
-    .map((tag) => {
-      const active = tag === state.selectedTag ? " is-active" : "";
-      return `<button class="filter${active}" type="button" data-tag="${escapeHtml(tag)}">${escapeHtml(tag)}</button>`;
+function groupedNotes(notes) {
+  const groups = new Map();
+  notes.forEach((note) => {
+    const category = note.category || PENDING_CATEGORY;
+    if (!groups.has(category)) groups.set(category, []);
+    groups.get(category).push(note);
+  });
+
+  if (!state.query.trim() && !groups.has(PENDING_CATEGORY)) {
+    groups.set(PENDING_CATEGORY, []);
+  }
+
+  return [...groups.entries()].sort(([a], [b]) => {
+    if (a === PENDING_CATEGORY && b !== PENDING_CATEGORY) return 1;
+    if (b === PENDING_CATEGORY && a !== PENDING_CATEGORY) return -1;
+    return a.localeCompare(b, "zh-Hans-CN");
+  });
+}
+
+function renderList(notes = filteredNotes()) {
+  const groups = groupedNotes(notes);
+  els.paperCount.textContent = `${notes.length} / ${state.notes.length} 篇论文 · ${groups.length} 个大类`;
+
+  if (!notes.length) {
+    els.paperList.innerHTML = `<div class="list-empty">没有匹配的论文</div>`;
+    return;
+  }
+
+  els.paperList.innerHTML = groups
+    .map(([category, groupNotes]) => {
+      const papers = groupNotes.length
+        ? groupNotes.map(renderPaperCard).join("")
+        : `<div class="category-empty">暂无论文</div>`;
+      return `<details class="category-group" open>
+        <summary>
+          <span>${escapeHtml(category)}</span>
+          <small>${groupNotes.length}</small>
+        </summary>
+        <div class="category-papers">${papers}</div>
+      </details>`;
     })
     .join("");
 }
 
-function renderList(notes = filteredNotes()) {
-  els.paperCount.textContent = `${notes.length} / ${state.notes.length} 篇论文`;
-
-  if (!notes.length) {
-    els.paperList.innerHTML = `<div class="list-empty">没有匹配的标签或论文</div>`;
-    return;
-  }
-
-  els.paperList.innerHTML = notes
-    .map((note) => {
-      const meta = [note.authors, note.year, note.venue].filter(Boolean).join(" · ");
-      const tags = note.tags.slice(0, 3).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
-      return `<button class="paper-card${note.id === state.activeId ? " is-active" : ""}" type="button" data-id="${escapeHtml(note.id)}">
+function renderPaperCard(note) {
+  const meta = [note.authors, note.year, note.venue].filter(Boolean).join(" · ");
+  const tags = note.tags.slice(0, 3).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+  return `<button class="paper-card${note.id === state.activeId ? " is-active" : ""}" type="button" data-id="${escapeHtml(note.id)}">
         <strong>${escapeHtml(note.title)}</strong>
         <small>${escapeHtml(meta || "未填写来源")}</small>
         <span class="mini-tags">${tags}</span>
       </button>`;
-    })
-    .join("");
 }
 
 function renderNote() {
@@ -171,7 +185,7 @@ function renderNote() {
   els.noteContent.hidden = !hasNote;
   if (!note) return;
 
-  els.noteStatus.textContent = note.tags[0] || "论文笔记";
+  els.noteStatus.textContent = note.category || PENDING_CATEGORY;
   els.noteTitle.textContent = note.title;
   els.noteMeta.textContent = [note.authors, note.year, note.venue].filter(Boolean).join(" · ");
   els.noteSummary.textContent = note.summary;
@@ -289,13 +303,6 @@ function escapeHtml(value) {
 function bindEvents() {
   els.searchInput.addEventListener("input", () => {
     state.query = els.searchInput.value;
-    render();
-  });
-
-  els.tagFilters.addEventListener("click", (event) => {
-    const button = event.target.closest(".filter");
-    if (!button) return;
-    state.selectedTag = button.dataset.tag || TAG_ALL;
     render();
   });
 

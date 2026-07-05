@@ -23,13 +23,11 @@
         <aside class="sidebar" aria-label="论文列表">
           <label class="search">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/></svg>
-            <input id="searchInput" type="search" placeholder="搜索论文、作者、标签" autocomplete="off" />
+            <input id="searchInput" type="search" placeholder="搜索论文、作者、大类、标签" autocomplete="off" />
           </label>
 
-          <div id="tagFilters" class="filters" aria-label="标签筛选"></div>
-
           <p id="paperCount" class="paper-count"></p>
-          <div id="paperList" class="paper-list"></div>
+          <div id="paperList" class="paper-list" aria-label="论文分类树"></div>
         </aside>
 
         <article class="note-viewer" aria-live="polite">

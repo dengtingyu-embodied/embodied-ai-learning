@@ -3,6 +3,7 @@ title: "GraspVLA: a Grasping Foundation Model Pre-trained on Billion-scale Synth
 authors: ""
 year: "2025"
 venue: "CoRL"
+category: "数据集与基准"
 tags: "grasping, benchmark, dataset"
 status: "精读中"
 pdf: "source/processing/GraspVLA.pdf"
