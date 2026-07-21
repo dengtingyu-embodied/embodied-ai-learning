@@ -9,7 +9,10 @@ status: "待读"
 pdf: "source/processing/pi0.pdf"
 summary: "在预训练 PaliGemma VLM 上增加处理机器人状态与连续动作的 action expert，使用条件 flow matching 生成高频 action chunk，并通过大规模跨机器人预训练和任务后训练获得通用语义能力与灵巧控制能力。"
 ---
+想用一个模型统一解决多个问题
+flowmatching见graspvla
 
+ai的总结:
 pi0 要解决的是：传统 VLA 把连续动作离散成 token 后自回归输出，量化会损失控制精度，逐 token 生成也难以支持高频灵巧操作；单任务 ACT 或 Diffusion Policy 又缺少语言知识、跨任务和跨机器人数据规模。pi0 将预训练 VLM 的语义能力与连续动作生成结合起来。
 
 输入由 2-3 路 RGB 图像、语言指令和机器人本体状态组成，输出是未来一段连续动作。论文采用约 30 亿参数的 PaliGemma 作为 VLM backbone，并增加约 3 亿参数、从头训练的 action expert，总规模约 33 亿参数。图像和语言 token 走 VLM 权重；机器人状态、带噪动作和 flow timestep 走 action expert 权重，两组 token 通过同一个 Transformer 的 attention 交换信息。
