@@ -277,6 +277,16 @@ button {
   line-height: 1.4;
 }
 
+.match-snippet {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #42504d;
+  font-size: 12px;
+  line-height: 1.55;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .mini-tags,
 .tag-row {
   display: flex;

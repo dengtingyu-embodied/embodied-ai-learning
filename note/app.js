@@ -38,6 +38,8 @@ const els = {
   paperCount: document.querySelector("#paperCount"),
   paperList: document.querySelector("#paperList"),
   emptyState: document.querySelector("#emptyState"),
+  emptyTitle: document.querySelector("#emptyTitle"),
+  emptyMessage: document.querySelector("#emptyMessage"),
   noteContent: document.querySelector("#noteContent"),
   noteStatus: document.querySelector("#noteStatus"),
   noteTitle: document.querySelector("#noteTitle"),
@@ -97,19 +99,26 @@ function sortNotes(notes) {
   return [...notes].sort((a, b) => (b.updatedAt || "").localeCompare(a.updatedAt || ""));
 }
 
-function activeNote() {
-  return state.notes.find((note) => note.id === state.activeId) || state.notes[0] || null;
+function searchTerms() {
+  return state.query
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
+function noteSearchText(note) {
+  const fields = [note.title, note.authors, note.year, note.venue, note.category, note.summary, note.tags.join(" ")];
+  fields.push(note.content);
+  return fields.join(" ").toLowerCase();
 }
 
 function filteredNotes() {
-  const query = state.query.trim().toLowerCase();
+  const terms = searchTerms();
   return state.notes.filter((note) => {
-    if (!query) return true;
-
-    const haystack = [note.title, note.authors, note.year, note.venue, note.category, note.summary, note.tags.join(" ")]
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(query);
+    if (!terms.length) return true;
+    const haystack = noteSearchText(note);
+    return terms.every((term) => haystack.includes(term));
   });
 }
 
@@ -120,7 +129,7 @@ function render() {
   }
 
   renderList(notes);
-  renderNote();
+  renderNote(notes);
 }
 
 function groupedNotes(notes) {
@@ -144,7 +153,10 @@ function groupedNotes(notes) {
 
 function renderList(notes = filteredNotes()) {
   const groups = groupedNotes(notes);
-  els.paperCount.textContent = `${notes.length} / ${state.notes.length} 篇论文 · ${groups.length} 个大类`;
+  const query = state.query.trim();
+  els.paperCount.textContent = query
+    ? `找到 ${notes.length} 篇匹配笔记`
+    : `${notes.length} 篇论文 · ${groups.length} 个大类`;
 
   if (!notes.length) {
     els.paperList.innerHTML = `<div class="list-empty">没有匹配的论文</div>`;
@@ -156,7 +168,7 @@ function renderList(notes = filteredNotes()) {
       const papers = groupNotes.length
         ? groupNotes.map(renderPaperCard).join("")
         : `<div class="category-empty">暂无论文</div>`;
-      return `<details class="category-group" open>
+      return `<details class="category-group"${state.query.trim() ? " open" : ""}>
         <summary>
           <span>${escapeHtml(category)}</span>
           <small>${groupNotes.length}</small>
@@ -170,20 +182,54 @@ function renderList(notes = filteredNotes()) {
 function renderPaperCard(note) {
   const meta = [note.authors, note.year, note.venue].filter(Boolean).join(" · ");
   const tags = note.tags.slice(0, 3).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+  const snippet = contentMatchSnippet(note);
   return `<button class="paper-card${note.id === state.activeId ? " is-active" : ""}" type="button" data-id="${escapeHtml(note.id)}">
         <strong>${escapeHtml(note.title)}</strong>
         <small>${escapeHtml(meta || "未填写来源")}</small>
+        ${snippet ? `<span class="match-snippet">正文：${escapeHtml(snippet)}</span>` : ""}
         <span class="mini-tags">${tags}</span>
       </button>`;
 }
 
-function renderNote() {
-  const note = activeNote();
+function plainText(value) {
+  return String(value || "")
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/^[#>*+-]+\s*/gm, "")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function contentMatchSnippet(note) {
+  const terms = searchTerms();
+  if (!terms.length) return "";
+
+  const content = plainText(note.content);
+  const lowerContent = content.toLowerCase();
+  const positions = terms.map((term) => lowerContent.indexOf(term)).filter((index) => index >= 0);
+  if (!positions.length) return "";
+
+  const matchAt = Math.min(...positions);
+  const start = Math.max(0, matchAt - 32);
+  const end = Math.min(content.length, matchAt + 92);
+  return `${start > 0 ? "…" : ""}${content.slice(start, end)}${end < content.length ? "…" : ""}`;
+}
+
+function renderNote(visibleNotes = filteredNotes()) {
+  const note = visibleNotes.find((item) => item.id === state.activeId) || visibleNotes[0] || null;
   const hasNote = Boolean(note);
 
   els.emptyState.hidden = hasNote;
   els.noteContent.hidden = !hasNote;
-  if (!note) return;
+  if (!note) {
+    const hasQuery = Boolean(state.query.trim());
+    els.emptyTitle.textContent = hasQuery ? "没有匹配的笔记" : "还没有笔记";
+    els.emptyMessage.textContent = hasQuery
+      ? "换一个关键词试试，搜索范围包括标题、作者、分类、标签、摘要和正文。"
+      : "把 Markdown 文件放进仓库的 notes/ 文件夹，然后 push，网站会自动更新。";
+    return;
+  }
 
   els.noteStatus.textContent = note.category || PENDING_CATEGORY;
   els.noteTitle.textContent = note.title;

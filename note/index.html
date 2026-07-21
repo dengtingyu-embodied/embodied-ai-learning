@@ -23,17 +23,17 @@
         <aside class="sidebar" aria-label="论文列表">
           <label class="search">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.35-4.35M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"/></svg>
-            <input id="searchInput" type="search" placeholder="搜索论文、作者、大类、标签" autocomplete="off" />
+            <input id="searchInput" type="search" placeholder="搜索标题、作者或笔记正文" aria-label="全文搜索笔记" autocomplete="off" />
           </label>
 
-          <p id="paperCount" class="paper-count"></p>
+          <p id="paperCount" class="paper-count" aria-live="polite"></p>
           <div id="paperList" class="paper-list" aria-label="论文分类树"></div>
         </aside>
 
         <article class="note-viewer" aria-live="polite">
           <div id="emptyState" class="empty-state" hidden>
-            <h2>还没有笔记</h2>
-            <p>把 Markdown 文件放进仓库的 notes/ 文件夹，然后 push，网站会自动更新。</p>
+            <h2 id="emptyTitle">还没有笔记</h2>
+            <p id="emptyMessage">把 Markdown 文件放进仓库的 notes/ 文件夹，然后 push，网站会自动更新。</p>
           </div>
 
           <div id="noteContent">
